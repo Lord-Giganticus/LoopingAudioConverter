@@ -20,6 +20,7 @@ jobs:
       uses: actions/cache@v2.1.6
       with:  
         path: ${{ github.workspace }}/packages
+        key: ${{ runner.os }}-nuget
     - name: Install Dependencies
       if: steps.nuget.outputs.cache-hit != 'true'
       run: nuget restore
