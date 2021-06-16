@@ -14,6 +14,7 @@ using System.Windows.Forms;
 using VGAudio.Containers.Adx;
 using VGAudio.Containers.Hca;
 using VGAudio.Containers.NintendoWare;
+using Microsoft.WindowsAPICodePack.Dialogs;
 
 namespace LoopingAudioConverter {
 	public partial class OptionsForm : Form {
@@ -224,12 +225,14 @@ namespace LoopingAudioConverter {
 		}
 
 		private void btnAddDir_Click(object sender, EventArgs e) {
-			using (FolderBrowserDialog d = new FolderBrowserDialog()) {
-				if (d.ShowDialog() == DialogResult.OK) {
+			using (var d = new CommonOpenFileDialog() {
+				IsFolderPicker = true
+			}) {
+				if (d.ShowDialog() == CommonFileDialogResult.Ok) {
 					btnAddDir.Enabled = false;
 					lblEnumerationStatus.Text = "Finding files...";
 					Task<string[]> enumerateFiles = new Task<string[]>(() => {
-						return Directory.EnumerateFiles(d.SelectedPath, "*.*", SearchOption.AllDirectories).ToArray();
+						return Directory.EnumerateFiles(d.FileName, "*.*", SearchOption.AllDirectories).ToArray();
 					});
 					enumerateFiles.ContinueWith(t => {
 						if (t.IsFaulted) {
@@ -312,10 +315,11 @@ namespace LoopingAudioConverter {
 		}
 
 		private void btnBrowse_Click(object sender, EventArgs e) {
-			using (FolderBrowserDialog d = new FolderBrowserDialog()) {
-				d.SelectedPath = txtOutputDir.Text;
-				if (d.ShowDialog() == DialogResult.OK) {
-					txtOutputDir.Text = d.SelectedPath;
+			using (var d = new CommonOpenFileDialog {
+				IsFolderPicker = true,
+			}) {
+				if (d.ShowDialog() == CommonFileDialogResult.Ok) {
+					txtOutputDir.Text = d.FileName;
 				}
 			}
 		}
