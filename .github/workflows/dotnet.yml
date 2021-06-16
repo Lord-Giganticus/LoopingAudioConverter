@@ -1,0 +1,54 @@
+name: .NET
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Add msbuild to PATH
+      uses: microsoft/setup-msbuild@v1.0.2
+      with:
+        vs-version: '16.5'
+    - name: Nuget Cache
+      id: nuget
+      uses: actions/cache@v2.1.6
+      with:  
+        path: ${{ github.workspace }}/packages
+    - name: Install Dependencies
+      if: steps.nuget.outputs.cache-hit != 'true'
+      run: nuget restore
+      shell: cmd
+    - name: Build Project
+      shell: cmd
+      run: msbuild -p:Configuration=Release
+    - name: Merge Files
+      shell: cmd
+      run: |
+        pushd ${{ github.workspace }}
+        cd dist
+        cmd /c merge.bat
+        7z a ../Build.zip windows linux64 linux32
+        popd
+    - name: Make Artifact
+      uses: actions/upload-artifact@v2.2.3
+      with:
+        name: Build
+        path: |
+          ${{ github.workspace }}/dist
+          !${{ github.workspace }}/**/*.bat
+    - name: Make a release
+      uses: "marvinpinto/action-automatic-releases@latest"
+      with:
+        repo_token: "${{ secrets.GITHUB_TOKEN }}"
+        automatic_release_tag: "auto"
+        prerelease: true
+        title: "Auto Build"
+        files: |
+          Build.zip
+        
