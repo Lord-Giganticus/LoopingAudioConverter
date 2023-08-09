@@ -40,39 +40,29 @@
   <PropertyGroup>
     <StartupObject />
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <DebugType>full</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.WindowsAPICodePack, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.WindowsAPICodePack-Core.1.1.0.0\lib\Microsoft.WindowsAPICodePack.dll</HintPath>
+    <Reference Include="BrawlLib, Version=0.37.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\BrawlLib.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.WindowsAPICodePack.Shell, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.WindowsAPICodePack-Shell.1.1.0.0\lib\Microsoft.WindowsAPICodePack.Shell.dll</HintPath>
+    <Reference Include="CustomMarshalers" />
+    <Reference Include="Microsoft.WindowsAPICodePack, Version=1.1.5.0, Culture=neutral, PublicKeyToken=8985beaab7ea3f04, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft-WindowsAPICodePack-Core.1.1.5\lib\net48\Microsoft.WindowsAPICodePack.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.WindowsAPICodePack.ShellExtensions, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.WindowsAPICodePack-Shell.1.1.0.0\lib\Microsoft.WindowsAPICodePack.ShellExtensions.dll</HintPath>
+    <Reference Include="Microsoft.WindowsAPICodePack.Shell, Version=1.1.5.0, Culture=neutral, PublicKeyToken=8985beaab7ea3f04, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft-WindowsAPICodePack-Shell.1.1.5\lib\net48\Microsoft.WindowsAPICodePack.Shell.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.WindowsAPICodePack.ShellExtensions, Version=1.1.5.0, Culture=neutral, PublicKeyToken=8985beaab7ea3f04, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft-WindowsAPICodePack-ShellExtensions.1.1.5\lib\net48\Microsoft.WindowsAPICodePack.ShellExtensions.dll</HintPath>
     </Reference>
     <Reference Include="MP3Sharp, Version=1.0.5.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\MP3Sharp.1.0.5\lib\netstandard2.0\MP3Sharp.dll</HintPath>
     </Reference>
+    <Reference Include="OpenTK">
+      <HintPath>..\lib\OpenTK.dll</HintPath>
+    </Reference>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
     <Reference Include="RunProcessAsTask, Version=1.2.4.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\RunProcessAsTask.1.2.4\lib\net45\RunProcessAsTask.dll</HintPath>
     </Reference>
@@ -81,6 +71,7 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -89,8 +80,14 @@
     <Reference Include="VGAudio, Version=2.2.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\VGAudio.2.2.1\lib\net45\VGAudio.dll</HintPath>
     </Reference>
+    <Reference Include="WindowsBase" />
+    <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Exporters\BrawlLibRWAVExporter.cs" />
+    <Compile Include="Exporters\BrawlLibRSTMExporter.cs" />
+    <Compile Include="Exporters\EffectEngineExporter.cs" />
+    <Compile Include="FFmpeg.cs" />
     <Compile Include="VGAudioOptions\BxstmOptions.cs" />
     <Compile Include="VGAudioOptions\VGAudioOptionsBase.cs" />
     <Compile Include="VGAudioOptions\HcaOptions.cs" />
@@ -114,7 +111,6 @@
     <Compile Include="Exporters\VGAudioExporter.cs" />
     <Compile Include="Importers\VGAudioImporter.cs" />
     <Compile Include="Exporters\RSTMExporter.cs" />
-    <Compile Include="Exporters\FLACExporter.cs" />
     <Compile Include="Interfaces.cs" />
     <Compile Include="Exporters\AACExporter.cs" />
     <Compile Include="AACQualityForm.cs">
@@ -123,11 +119,11 @@
     <Compile Include="AACQualityForm.Designer.cs">
       <DependentUpon>AACQualityForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="OggVorbisQualityForm.cs">
+    <Compile Include="QualityForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="OggVorbisQualityForm.Designer.cs">
-      <DependentUpon>OggVorbisQualityForm.cs</DependentUpon>
+    <Compile Include="QualityForm.Designer.cs">
+      <DependentUpon>QualityForm.cs</DependentUpon>
     </Compile>
     <Compile Include="MP3QualityForm.cs">
       <SubType>Form</SubType>
@@ -153,7 +149,6 @@
       <DependentUpon>MultipleProgressWindow.cs</DependentUpon>
     </Compile>
     <Compile Include="NamedAudio.cs" />
-    <Compile Include="Exporters\OggVorbisExporter.cs" />
     <Compile Include="OptionsForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -177,8 +172,8 @@
     <EmbeddedResource Include="VGAudioOptions\VGAudioOptionsForm.resx">
       <DependentUpon>VGAudioOptionsForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="OggVorbisQualityForm.resx">
-      <DependentUpon>OggVorbisQualityForm.cs</DependentUpon>
+    <EmbeddedResource Include="QualityForm.resx">
+      <DependentUpon>QualityForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MP3QualityForm.resx">
       <DependentUpon>MP3QualityForm.cs</DependentUpon>
@@ -196,10 +191,6 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\BrawlLib.LoopSelection\BrawlLib.LoopSelection.csproj">
-      <Project>{41c94979-ce5a-4582-888a-1bee98dd43d3}</Project>
-      <Name>BrawlLib.LoopSelection</Name>
-    </ProjectReference>
     <ProjectReference Include="..\MSFContainerLib\MSFContainerLib.csproj">
       <Project>{31bd3716-2d0b-49e4-a0e8-2c4e0add93f5}</Project>
       <Name>MSFContainerLib</Name>

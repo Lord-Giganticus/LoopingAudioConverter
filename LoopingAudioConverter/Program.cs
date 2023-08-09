@@ -1,4 +1,5 @@
-﻿using BrawlLib.LoopSelection;
+﻿using BrawlLib.Internal.Windows.Forms;
+using BrawlLib.SSBB.Types.Audio;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -9,27 +10,12 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using VGAudio.Utilities;
 
 namespace LoopingAudioConverter {
 	class Program {
 		[STAThread]
 		static void Main(string[] args) {
 			Application.EnableVisualStyles();
-
-			List<string> errors = new List<string>(0);
-			foreach (string s in new string[] { "sox_path", "vgmstream_path", "lame_path", "faad_path" }) {
-				string v = ConfigurationManager.AppSettings[s];
-				if (string.IsNullOrEmpty(v)) {
-					errors.Add("The configuration setting " + s + " is missing");
-				} else if (!File.Exists(ConfigurationManager.AppSettings[s])) {
-					errors.Add($"Could not find {s} ({v})");
-				}
-			}
-
-			if (errors.Any()) {
-				MessageBox.Show("One or more programs could not be found; the program may not run properly:" + Environment.NewLine + string.Join(Environment.NewLine, errors));
-			}
 
 			string ini = null;
 			List<string> initialInputFiles = new List<string>();
@@ -55,11 +41,32 @@ namespace LoopingAudioConverter {
 			f.AddInputFiles(initialInputFiles);
 			
 			if (auto) {
-				RunAsync(f.GetOptions(), showEndDialog: false).GetAwaiter().GetResult();
-			} else {
+				f.Auto = true;
+				f.Shown += (o, e) => f.AcceptButton.PerformClick();
+			} 
+
+			{
 				Application.Run(f);
 				Task.WaitAll(f.RunningTasks.ToArray());
 			}
+		}
+
+		public static IEnumerable<IAudioImporter> BuildImporters() {
+			yield return new WAVImporter();
+			yield return new VGAudioImporter();
+			yield return new MP3Importer();
+			if (ConfigurationManager.AppSettings["faad_path"] is string faad_path)
+				yield return new MP4Importer(faad_path);
+			if (ConfigurationManager.AppSettings["vgmplay_path"] is string vgmplay_path)
+				yield return new VGMImporter(vgmplay_path);
+			yield return new MSU1();
+			yield return new MSFImporter();
+			if (ConfigurationManager.AppSettings["vgmstream_path"] is string vgmstream_path)
+				yield return new VGMStreamImporter(vgmstream_path);
+			if (ConfigurationManager.AppSettings["ffmpeg_path"] is string ffmpeg_path)
+				yield return new FFmpeg(ffmpeg_path);
+			if (ConfigurationManager.AppSettings["sox_path"] is string sox_path)
+				yield return new SoX(sox_path);
 		}
 
 		/// <summary>
@@ -72,78 +79,68 @@ namespace LoopingAudioConverter {
 					"Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 			}
 
-			SoX sox = new SoX(ConfigurationManager.AppSettings["sox_path"]);
+			List<IAudioImporter> importers = BuildImporters().ToList();
 
-			List<IAudioImporter> importers = new List<IAudioImporter> {
-					new WAVImporter(),
-					new MP3Importer(),
-					new MP4Importer(ConfigurationManager.AppSettings["faad_path"]),
-					new VGMImporter(ConfigurationManager.AppSettings["vgmplay_path"]),
-					new MSU1(),
-					new MSFImporter(),
-					new VGMStreamImporter(ConfigurationManager.AppSettings["vgmstream_path"]),
-					sox
-				};
-			if (o.VGAudioDecoder) {
-				importers.Insert(1, new VGAudioImporter());
+			IEffectEngine effectEngine = importers.OfType<IEffectEngine>().FirstOrDefault() ?? throw new AudioImporterException("Could not find either ffmpeg or SoX - please specify ffmpeg_path or sox_path in .config file");
+
+			IAudioExporter getExporter() {
+				switch (o.ExporterType) {
+					case ExporterType.BRSTM:
+						return new RSTMExporter(o.BxstmOptions?.Configuration);
+					case ExporterType.BCSTM:
+						return new CSTMExporter(o.BxstmOptions?.Configuration);
+					case ExporterType.BFSTM:
+						return new FSTMExporter(o.BxstmOptions?.Configuration);
+					case ExporterType.DSP:
+						return new DSPExporter();
+					case ExporterType.IDSP:
+						return new IDSPExporter();
+					case ExporterType.HPS:
+						return new HPSExporter();
+					case ExporterType.HCA:
+						return new HCAExporter(o.HcaOptions?.Configuration);
+					case ExporterType.ADX:
+						return new ADXExporter(o.AdxOptions?.Configuration);
+					case ExporterType.BrawlLib_BRSTM_ADPCM:
+						return new BrawlLibRSTMExporter(WaveEncoding.ADPCM, BrawlLibRSTMExporter.Container.RSTM);
+					case ExporterType.BrawlLib_BRSTM_PCM16:
+						return new BrawlLibRSTMExporter(WaveEncoding.PCM16, BrawlLibRSTMExporter.Container.RSTM);
+					case ExporterType.BrawlLib_BCSTM:	
+						return new BrawlLibRSTMExporter(WaveEncoding.ADPCM, BrawlLibRSTMExporter.Container.CSTM);
+					case ExporterType.BrawlLib_BFSTM:
+						return new BrawlLibRSTMExporter(WaveEncoding.ADPCM, BrawlLibRSTMExporter.Container.FSTM);
+					case ExporterType.BrawlLib_BRWAV:
+						return new BrawlLibRWAVExporter();
+					case ExporterType.MSF_PCM16BE:
+						return new MSFPCM16Exporter(big_endian: true);
+					case ExporterType.MSF_PCM16LE:
+						return new MSFPCM16Exporter(big_endian: false);
+					case ExporterType.MSU1:
+						return new MSU1();
+					case ExporterType.FLAC:
+						return new EffectEngineExporter(effectEngine, "", ".flac");
+					case ExporterType.MP3:
+						return new MP3Exporter(ConfigurationManager.AppSettings["lame_path"], o.MP3EncodingParameters);
+					case ExporterType.FFmpeg_MP3:
+						return new EffectEngineExporter(effectEngine, o.MP3FFmpegParameters, ".mp3");
+					case ExporterType.AAC_M4A:
+						return new AACExporter(ConfigurationManager.AppSettings["qaac_path"], o.AACEncodingParameters, adts: false);
+					case ExporterType.FFmpeg_AAC_M4A:
+						return new EffectEngineExporter(effectEngine, o.AACFFmpegParameters, ".m4a");
+					case ExporterType.AAC_ADTS:
+						return new AACExporter(ConfigurationManager.AppSettings["qaac_path"], o.AACEncodingParameters, adts: true);
+					case ExporterType.FFmpeg_AAC_ADTS:
+						return new EffectEngineExporter(effectEngine, o.AACFFmpegParameters, ".aac");
+					case ExporterType.OggVorbis:
+						return new EffectEngineExporter(importers.OfType<SoX>().Single(), o.OggVorbisEncodingParameters, ".ogg");
+					case ExporterType.WAV:
+						return new WAVExporter();
+					default:
+						throw new Exception("Could not create exporter type " + o.ExporterType);
+				}
 			}
 
-			IAudioExporter exporter;
-			switch (o.ExporterType) {
-				case ExporterType.BRSTM:
-					exporter = new RSTMExporter(o.BxstmOptions?.Configuration);
-					break;
-				case ExporterType.BCSTM:
-					exporter = new CSTMExporter(o.BxstmOptions?.Configuration);
-					break;
-				case ExporterType.BFSTM:
-					exporter = new FSTMExporter(o.BxstmOptions?.Configuration);
-					break;
-				case ExporterType.DSP:
-					exporter = new DSPExporter();
-					break;
-				case ExporterType.IDSP:
-					exporter = new IDSPExporter();
-					break;
-				case ExporterType.HPS:
-					exporter = new HPSExporter();
-					break;
-				case ExporterType.HCA:
-					exporter = new HCAExporter(o.HcaOptions?.Configuration);
-					break;
-				case ExporterType.ADX:
-					exporter = new ADXExporter(o.AdxOptions?.Configuration);
-					break;
-				case ExporterType.MSF_PCM16BE:
-					exporter = new MSFPCM16Exporter(big_endian: true);
-					break;
-				case ExporterType.MSF_PCM16LE:
-					exporter = new MSFPCM16Exporter(big_endian: false);
-					break;
-				case ExporterType.MSU1:
-					exporter = new MSU1();
-					break;
-				case ExporterType.FLAC:
-					exporter = new FLACExporter(sox);
-					break;
-				case ExporterType.MP3:
-					exporter = new MP3Exporter(ConfigurationManager.AppSettings["lame_path"], o.MP3EncodingParameters);
-					break;
-				case ExporterType.AAC_M4A:
-					exporter = new AACExporter(ConfigurationManager.AppSettings["qaac_path"], o.AACEncodingParameters, adts: false);
-					break;
-				case ExporterType.AAC_ADTS:
-					exporter = new AACExporter(ConfigurationManager.AppSettings["qaac_path"], o.AACEncodingParameters, adts: true);
-					break;
-				case ExporterType.OggVorbis:
-					exporter = new OggVorbisExporter(sox, o.OggVorbisEncodingParameters);
-					break;
-				case ExporterType.WAV:
-					exporter = new WAVExporter();
-					break;
-				default:
-					throw new Exception("Could not create exporter type " + o.ExporterType);
-			}
+			IAudioExporter exporter = getExporter();
 
 			List<Task> tasks = new List<Task>();
 			SemaphoreSlim sem = new SemaphoreSlim(o.NumSimulTasks, o.NumSimulTasks);
@@ -189,9 +186,14 @@ namespace LoopingAudioConverter {
 				string outputDir = o.OutputDir;
 				string inputDir = Path.GetDirectoryName(inputFile);
 				for (int x = 0; x < 100; x++) {
+					if (inputDir == o.InputDir) {
+						outputDir = outputDir.Replace("*", "");
+						break;
+					}
+					
 					int index = outputDir.LastIndexOf('*');
 					if (index < 0) break;
-
+					
 					string replacement = Path.GetFileName(inputDir);
 					outputDir = outputDir.Substring(0, index) + replacement + outputDir.Substring(index + 1);
 					inputDir = Path.GetDirectoryName(inputDir);
@@ -255,7 +257,7 @@ namespace LoopingAudioConverter {
 				}
 
 				window.SetDecodingText(filename_no_ext + " (applying effects)");
-				w = sox.ApplyEffects(w,
+				w = effectEngine.ApplyEffects(w,
 					channels: o.Channels ?? w.Channels,
 					rate: o.SampleRate ?? w.SampleRate,
 					db: o.AmplifydB ?? 0M,
@@ -319,8 +321,6 @@ namespace LoopingAudioConverter {
 
 					if (!o.ShortCircuit) {
 						toExport.Audio.OriginalPath = null;
-						toExport.Audio.OriginalAudioData = null;
-						toExport.Audio.OriginalMP3 = null;
 					}
 					if (!o.WriteLoopingMetadata) {
 						toExport.Audio.Looping = false;
