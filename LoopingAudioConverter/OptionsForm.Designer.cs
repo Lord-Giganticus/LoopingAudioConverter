@@ -24,6 +24,8 @@
         /// </summary>
         private void InitializeComponent() {
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.txtInputDir = new System.Windows.Forms.TextBox();
+            this.label5 = new System.Windows.Forms.Label();
             this.btnSuffixFilter = new System.Windows.Forms.Button();
             this.txtSuffixFilter = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
@@ -77,7 +79,6 @@
             this.label1 = new System.Windows.Forms.Label();
             this.numFadeOutTime = new System.Windows.Forms.NumericUpDown();
             this.chkShortCircuit = new System.Windows.Forms.CheckBox();
-            this.chkVGAudioDecoder = new System.Windows.Forms.CheckBox();
             this.panel3 = new System.Windows.Forms.Panel();
             this.numSimulTasks = new System.Windows.Forms.NumericUpDown();
             this.lblSimulTasks = new System.Windows.Forms.Label();
@@ -118,6 +119,8 @@
             // 
             // splitContainer1.Panel1
             // 
+            this.splitContainer1.Panel1.Controls.Add(this.txtInputDir);
+            this.splitContainer1.Panel1.Controls.Add(this.label5);
             this.splitContainer1.Panel1.Controls.Add(this.btnSuffixFilter);
             this.splitContainer1.Panel1.Controls.Add(this.txtSuffixFilter);
             this.splitContainer1.Panel1.Controls.Add(this.label4);
@@ -134,12 +137,32 @@
             this.splitContainer1.SplitterDistance = 161;
             this.splitContainer1.TabIndex = 0;
             // 
+            // txtInputDir
+            // 
+            this.txtInputDir.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtInputDir.Location = new System.Drawing.Point(383, 112);
+            this.txtInputDir.Name = "txtInputDir";
+            this.txtInputDir.Size = new System.Drawing.Size(148, 20);
+            this.txtInputDir.TabIndex = 7;
+            // 
+            // label5
+            // 
+            this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label5.Location = new System.Drawing.Point(296, 112);
+            this.label5.Margin = new System.Windows.Forms.Padding(3);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(81, 20);
+            this.label5.TabIndex = 8;
+            this.label5.Text = "Input directory:";
+            this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
             // btnSuffixFilter
             // 
             this.btnSuffixFilter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnSuffixFilter.Location = new System.Drawing.Point(271, 113);
+            this.btnSuffixFilter.Location = new System.Drawing.Point(245, 112);
             this.btnSuffixFilter.Name = "btnSuffixFilter";
-            this.btnSuffixFilter.Size = new System.Drawing.Size(75, 19);
+            this.btnSuffixFilter.Size = new System.Drawing.Size(45, 19);
             this.btnSuffixFilter.TabIndex = 3;
             this.btnSuffixFilter.Text = "Filter";
             this.btnSuffixFilter.UseVisualStyleBackColor = true;
@@ -148,18 +171,18 @@
             // txtSuffixFilter
             // 
             this.txtSuffixFilter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.txtSuffixFilter.Location = new System.Drawing.Point(137, 113);
+            this.txtSuffixFilter.Location = new System.Drawing.Point(127, 112);
             this.txtSuffixFilter.Name = "txtSuffixFilter";
-            this.txtSuffixFilter.Size = new System.Drawing.Size(128, 20);
+            this.txtSuffixFilter.Size = new System.Drawing.Size(112, 20);
             this.txtSuffixFilter.TabIndex = 2;
             // 
             // label4
             // 
             this.label4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label4.Location = new System.Drawing.Point(3, 112);
+            this.label4.Location = new System.Drawing.Point(3, 111);
             this.label4.Margin = new System.Windows.Forms.Padding(3);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(128, 20);
+            this.label4.Size = new System.Drawing.Size(118, 20);
             this.label4.TabIndex = 1;
             this.label4.Text = "Only files ending with:";
             this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -167,7 +190,7 @@
             // btnBrowse
             // 
             this.btnBrowse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnBrowse.Location = new System.Drawing.Point(419, 138);
+            this.btnBrowse.Location = new System.Drawing.Point(499, 137);
             this.btnBrowse.Name = "btnBrowse";
             this.btnBrowse.Size = new System.Drawing.Size(32, 20);
             this.btnBrowse.TabIndex = 6;
@@ -179,16 +202,16 @@
             // 
             this.txtOutputDir.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtOutputDir.Location = new System.Drawing.Point(99, 138);
+            this.txtOutputDir.Location = new System.Drawing.Point(99, 137);
             this.txtOutputDir.Name = "txtOutputDir";
-            this.txtOutputDir.Size = new System.Drawing.Size(314, 20);
+            this.txtOutputDir.Size = new System.Drawing.Size(394, 20);
             this.txtOutputDir.TabIndex = 5;
             this.txtOutputDir.Text = "./output";
             // 
             // lblOutputDir
             // 
             this.lblOutputDir.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.lblOutputDir.Location = new System.Drawing.Point(3, 138);
+            this.lblOutputDir.Location = new System.Drawing.Point(3, 137);
             this.lblOutputDir.Margin = new System.Windows.Forms.Padding(3);
             this.lblOutputDir.Name = "lblOutputDir";
             this.lblOutputDir.Size = new System.Drawing.Size(90, 20);
@@ -207,23 +230,23 @@
             this.listBox1.Location = new System.Drawing.Point(3, 3);
             this.listBox1.Name = "listBox1";
             this.listBox1.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.listBox1.Size = new System.Drawing.Size(448, 103);
+            this.listBox1.Size = new System.Drawing.Size(448, 102);
             this.listBox1.TabIndex = 0;
             this.listBox1.DragDrop += new System.Windows.Forms.DragEventHandler(this.listBox1_DragDrop);
             this.listBox1.DragEnter += new System.Windows.Forms.DragEventHandler(this.listBox1_DragEnter);
             // 
             // flowLayoutPanel1
             // 
+            this.flowLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.flowLayoutPanel1.AutoSize = true;
             this.flowLayoutPanel1.Controls.Add(this.btnAdd);
             this.flowLayoutPanel1.Controls.Add(this.btnAddDir);
             this.flowLayoutPanel1.Controls.Add(this.btnRemove);
             this.flowLayoutPanel1.Controls.Add(this.lblEnumerationStatus);
-            this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Right;
             this.flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
             this.flowLayoutPanel1.Location = new System.Drawing.Point(454, 0);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(80, 161);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(80, 105);
             this.flowLayoutPanel1.TabIndex = 0;
             // 
             // btnAdd
@@ -276,7 +299,6 @@
             this.flowLayoutPanel2.Controls.Add(this.pnlExportChannels);
             this.flowLayoutPanel2.Controls.Add(this.pnlExportSegments);
             this.flowLayoutPanel2.Controls.Add(this.chkShortCircuit);
-            this.flowLayoutPanel2.Controls.Add(this.chkVGAudioDecoder);
             this.flowLayoutPanel2.Controls.Add(this.panel3);
             this.flowLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flowLayoutPanel2.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
@@ -760,32 +782,18 @@
             // chkShortCircuit
             // 
             this.chkShortCircuit.AutoSize = true;
-            this.chkShortCircuit.Checked = true;
-            this.chkShortCircuit.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkShortCircuit.Location = new System.Drawing.Point(233, 192);
             this.chkShortCircuit.Name = "chkShortCircuit";
             this.chkShortCircuit.Size = new System.Drawing.Size(259, 17);
             this.chkShortCircuit.TabIndex = 4;
             this.chkShortCircuit.Text = "Skip re-encoding for similar formats when possible";
             // 
-            // chkVGAudioDecoder
-            // 
-            this.chkVGAudioDecoder.AutoSize = true;
-            this.chkVGAudioDecoder.Checked = true;
-            this.chkVGAudioDecoder.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkVGAudioDecoder.Location = new System.Drawing.Point(233, 215);
-            this.chkVGAudioDecoder.Name = "chkVGAudioDecoder";
-            this.chkVGAudioDecoder.Size = new System.Drawing.Size(132, 17);
-            this.chkVGAudioDecoder.TabIndex = 5;
-            this.chkVGAudioDecoder.Text = "Use VGAudio decoder";
-            this.chkVGAudioDecoder.UseVisualStyleBackColor = false;
-            // 
             // panel3
             // 
             this.panel3.AutoSize = true;
             this.panel3.Controls.Add(this.numSimulTasks);
             this.panel3.Controls.Add(this.lblSimulTasks);
-            this.panel3.Location = new System.Drawing.Point(230, 238);
+            this.panel3.Location = new System.Drawing.Point(230, 215);
             this.panel3.Margin = new System.Windows.Forms.Padding(0, 3, 0, 3);
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(198, 28);
@@ -974,7 +982,6 @@
         private System.Windows.Forms.CheckBox chkShortCircuit;
         private System.Windows.Forms.Button btnSaveOptions;
         private System.Windows.Forms.Button btnLoadOptions;
-        private System.Windows.Forms.CheckBox chkVGAudioDecoder;
         private System.Windows.Forms.Panel panel4;
         private System.Windows.Forms.ComboBox ddlUnknownLoopBehavior;
         private System.Windows.Forms.Label lblUnknownLoopBehavior;
@@ -984,5 +991,7 @@
 		private System.Windows.Forms.CheckBox chkPitch;
 		private System.Windows.Forms.NumericUpDown numTempo;
 		private System.Windows.Forms.CheckBox chkTempo;
+		private System.Windows.Forms.TextBox txtInputDir;
+		private System.Windows.Forms.Label label5;
 	}
 }

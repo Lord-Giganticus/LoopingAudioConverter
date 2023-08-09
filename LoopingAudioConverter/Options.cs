@@ -1,11 +1,7 @@
-﻿using LoopingAudioConverter.VGAudioOptions;
-using System;
+﻿using BrawlLib.SSBB.Types.Audio;
+using LoopingAudioConverter.VGAudioOptions;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
 using System.Xml.Serialization;
-using VGAudio.Containers.NintendoWare;
 
 namespace LoopingAudioConverter {
 	public enum ExporterType {
@@ -17,6 +13,11 @@ namespace LoopingAudioConverter {
 		HPS,
 		HCA,
 		ADX,
+		BrawlLib_BRSTM_ADPCM,
+		BrawlLib_BRSTM_PCM16,
+		BrawlLib_BCSTM,
+		BrawlLib_BFSTM,
+		BrawlLib_BRWAV,
 		MSF_PCM16LE,
 		MSF_PCM16BE,
 		MSU1,
@@ -25,7 +26,10 @@ namespace LoopingAudioConverter {
 		MP3,
 		AAC_M4A,
 		AAC_ADTS,
-		OggVorbis
+		OggVorbis,
+		FFmpeg_MP3,
+		FFmpeg_AAC_M4A,
+		FFmpeg_AAC_ADTS
 	}
 
 	public enum ChannelSplit {
@@ -46,6 +50,7 @@ namespace LoopingAudioConverter {
 		public IEnumerable<string> InputFiles { get; set; }
 
 		public string OutputDir { get; set; }
+		public string InputDir { get; set; }
 		public int? Channels { get; set; }
 		public int? SampleRate { get; set; }
 		public decimal? AmplifydB { get; set; }
@@ -57,9 +62,12 @@ namespace LoopingAudioConverter {
 		public string MP3EncodingParameters { get; set; }
 		public string AACEncodingParameters { get; set; }
 		public string OggVorbisEncodingParameters { get; set; }
+		public string MP3FFmpegParameters { get; set; }
+		public string AACFFmpegParameters { get; set; }
 		public AdxOptions AdxOptions { get; set; }
 		public HcaOptions HcaOptions { get; set; }
 		public BxstmOptions BxstmOptions { get; set; }
+		public WaveEncoding? WaveEncoding { get; set; }
 		public UnknownLoopBehavior UnknownLoopBehavior { get; set; }
 		public bool ExportWholeSong { get; set; }
 		public string WholeSongSuffix { get; set; }
@@ -71,7 +79,6 @@ namespace LoopingAudioConverter {
 		public bool ExportLoop { get; set; }
 		public string LoopSuffix { get; set; }
 		public bool ShortCircuit { get; set; }
-		public bool VGAudioDecoder { get; set; }
 		public int NumSimulTasks { get; set; }
 	}
 }
