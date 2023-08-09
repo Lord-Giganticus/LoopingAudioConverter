@@ -15,14 +15,7 @@ jobs:
       uses: microsoft/setup-msbuild@v1.0.2
       with:
         vs-version: '16.5'
-    - name: Nuget Cache
-      id: nuget
-      uses: actions/cache@v2.1.6
-      with:  
-        path: ${{ github.workspace }}/packages
-        key: ${{ runner.os }}-nuget
     - name: Install Dependencies
-      if: steps.nuget.outputs.cache-hit != 'true'
       run: nuget restore
       shell: cmd
     - name: Build Project
